@@ -2,11 +2,11 @@
 
 import logging
 import openai
-import dirtyjson
+import json
 
 logger = logging.getLogger(__name__)
 
-prompt_template = """Consider this json: `[{id: 1, name: "West Hall", desc: "You are in the west hall.", exits: [{room_id: 2, dir: "east"}]},{id: 2, name: "East Hall", desc: "You are in the east hall", exits: [{room_id: 1, dir: "west"}]}]`  This json format can power a small text adventure game that lets the player explore interconnected rooms.  The player starts in room id 1.  Using this same format, design a small set of rooms according to this prompt "TARGET".  compose your response using minified json.  return ONLY the json and nothing else."""
+prompt_template = """Consider this json: `[{"id":1,"name":"West Hall","desc":"You are in the west hall.","exits":[{"room_id":2,"dir":"east"}]},{"id":2,"name":"East Hall","desc":"You are in the east hall","exits":[{"room_id":1,"dir":"west"}]}]`  This json format can power a small text adventure game that lets the player explore interconnected rooms.  The player starts in room id 1.  Using this same format, design a small set of rooms according to this prompt "TARGET".  compose your response using minified json.  return ONLY the json and nothing else."""
 
 def target_to_json(target: str):
     response = openai.Completion.create(
@@ -20,7 +20,7 @@ def target_to_json(target: str):
 
     for p in pieces:
         try:
-            d = dirtyjson.loads(p.strip())
+            d = json.loads(p.strip())
             return d
         except Exception:
             # logger.exception('Could not load chunk')
@@ -29,7 +29,7 @@ def target_to_json(target: str):
         print('None of these returned data was usable:',pieces)
         return None
 
-rooms = [{"id": 1, "name": "Welcome", "desc": "Use /teleport to visit a world of your choosing.\n\nExample: `/teleport an enchanted forest filled with riddles and mystery`.\n\nIf you get a bad result, just try again."}]
+rooms = [{"id": 1, "name": "Welcome", "desc": "Use /teleport to visit a world of your choosing.\n\nExample: `/teleport a detailed map of the starship enterprise`.\n\nIf you get a bad result, just try again."}]
 
 current_room_id = 1
 while True:
