@@ -2,7 +2,7 @@
 
 import logging
 import openai
-import json
+import dirtyjson
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ def target_to_json(target: str):
 
     for p in pieces:
         try:
-            d = json.loads(p.strip())
+            d = dirtyjson.loads(p.strip())
             return d
         except Exception:
             # logger.exception('Could not load chunk')
